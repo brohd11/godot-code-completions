@@ -570,9 +570,12 @@ class EditorSet:
 	const ENABLE = &"plugin/code_completion/alias/enable"
 	const DIRECTORY = &"plugin/code_completion/alias/directory"
 	
-	static func get_dir():
+	static func get_dir() -> String:
 		var ed_set = EditorInterface.get_editor_settings()
-		return ed_set.get_setting(DIRECTORY)
+		if ed_set.has_setting(DIRECTORY):
+			return ed_set.get_setting(DIRECTORY)
+		ed_set.set_setting(DIRECTORY, DEFAULT_ALIAS_DIR)
+		return DEFAULT_ALIAS_DIR
 
 
 
