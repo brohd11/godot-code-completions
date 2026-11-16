@@ -1,5 +1,3 @@
-#! remote
-
 const TagParser = preload("uid://mjs2johce5hs") #! resolve EditorParser.TagParser
 
 const UClassDetail = preload("uid://0a4i0eyxcij7") #! resolve UtilR.Objects.UClassDetail
