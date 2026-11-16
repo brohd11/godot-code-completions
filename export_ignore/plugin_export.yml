@@ -1,19 +1,8 @@
 export_root: "res://addons/code_completions/export_ignore/exports"
 exports:
   -
-    exclude:
-      directories:
-        - "res://addons/code_completions/export_ignore"
-      file_extensions: []
-      files: []
     export_name: "code-completions{{version=code_completions}}"
     export_folder: "addons/code_completions"
-    other_transfers: []
-    parser_overide_settings:
-      parse_cs: {}
-      parse_gd: {}
-      parse_tscn: {}
-    remote_dir: "res://addons/code_completions/src/remote"
     source: "res://addons/code_completions"
 options:
   include_import: true
@@ -21,7 +10,6 @@ options:
   overwrite: true
   include_min_version: true
   use_tag_in_cfg: true
-  exported_deps: []
   parser_settings:
     backport_target: 100.0
     parse_cs:
