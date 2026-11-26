@@ -52,7 +52,7 @@ var arr_struct:ArrStruct
 var unicode_completion:UnicodeCompletion
 var native_completion:EditorCodeCompletion
 
-const TF = preload("uid://ft7o6vspsurv") #! resolve ALibRuntime.Utils.UProfile.TimeFunction #TODO erase
+const TF = UtilR.Profile.TimeFunction #TODO erase
 
 static func get_singleton_name() -> String:
 	return "EditorCodeCompletionSingleton"

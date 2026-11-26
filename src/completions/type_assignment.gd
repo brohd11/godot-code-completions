@@ -2,7 +2,6 @@ extends EditorCodeCompletion
 
 
 #! import_p UClassDetail,
-const UFile = preload("uid://bl33psa06nv1e") #! resolve ALibRuntime.Utils.UFile.Methods
 const Import = preload("res://addons/code_completions/src/completions/import_code_completion.gd")
 
 func _get_completion_settings() -> Dictionary:

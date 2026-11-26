@@ -316,12 +316,11 @@ func _get_enum_vars(enum_type_path:String) -> Array:
 
 #endregion
 
-const PrintDebug = preload("uid://d1ki8cxxh7lvb") #! resolve ALibEditor.PrintDebug
 #! arg_location section:T
 static func print_deb(section:String, msg:Array):
 	if section in _PRINT:
 		msg.push_front(section)
-		PrintDebug.print(msg)
+		print("::".join(msg))
 
 const _PRINT = [
 	#T.ACCESS_PATH,

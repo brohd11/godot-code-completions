@@ -3,7 +3,7 @@ extends EditorCodeCompletion
 const TagParser = UtilsRemote.TagParser
 const Token = UtilsRemote.Token
 
-const HLInfo = preload("uid://cfbf3hc1q2j3f") #! resolve SyntaxPlusSingleton.HLInfo
+const HLInfo = SyntaxPlusSingleton.HLInfo
 
 const ARG_LOCATION_ENABLE = &"plugin/code_completion/arg_location/enable"
 
