@@ -38,16 +38,16 @@ static func unregister_plugin(plugin:EditorPlugin):
 	EditorCodeCompletionSingleton.unregister_node(plugin)
 
 func _init() -> void:
+	# Set before the singleton check: option building needs it even unregistered (e.g. package CI).
+	editor_theme = EditorInterface.get_editor_theme()
 	var settings = _get_completion_settings()
 	if not EditorCodeCompletionSingleton.instance_valid():
 		printerr("Register plugin with 'EditorCodeCompletion.register_plugin()' before instancing.")
 		return
-	
+
 	singleton = EditorCodeCompletionSingleton.get_instance()
 	EditorCodeCompletionSingleton.register_completion(self, settings)
 	EditorCodeCompletionSingleton.call_on_ready(_singleton_ready)
-	
-	editor_theme = EditorInterface.get_editor_theme()
 
 ## Settings for the Singleton. Current Settings:
 ## priority:int
@@ -85,6 +85,8 @@ func register_tag(prefix:String, tag:String, location:=TagLocation.ANY):
 	_tags[prefix][tag] = true
 
 func clean_up() -> void:
+	if singleton == null: # never registered, so no completion or tags to remove
+		return
 	singleton.unregister_completion(self)
 	
 	for prefix:String in _tags.keys():
