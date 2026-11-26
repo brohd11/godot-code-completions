@@ -17,7 +17,8 @@ func _on_code_completion_requested(script_editor:CodeEdit) -> bool:
 	var caret_col = caret_context.caret_column
 	var current_line_text = script_editor.get_line(caret_context.caret_line)
 	
-	var string_map = caret_context.get_string_map(current_line_text)
+	# Our own copy's map: the caret context's comes from whichever copy owns the parser.
+	var string_map = get_string_map(current_line_text)
 	var tag_present = ""
 	var tag_idx = -1
 	for tag in tags: # find tag in line

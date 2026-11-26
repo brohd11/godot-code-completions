@@ -1,4 +1,5 @@
 extends EditorCodeCompletion
+#! gdp-strip-cast GDScriptParser, CaretContext, ParserClass
 
 const PRINT_DEBUG = false
 
@@ -625,7 +626,7 @@ func _get_local_var_function_data(type_rich:Dictionary, limit_to_arg:=true):
 	if not is_instance_valid(ed_parser):
 		return ""
 	var parser_data = ed_parser.get_parser_and_class_obj_for_script(back)
-	var class_obj = parser_data.class_obj as GDScriptParser.ParserClass
+	var class_obj = parser_data.class_obj as ParserClass
 	var func_obj = class_obj.get_function(class_obj.get_function_at_line(local_var_data.line))
 	if limit_to_arg:
 		if not func_obj.get_arguments().has(local_var_data.member_name):
@@ -661,7 +662,7 @@ func _syntax_highlighting(_script_editor:CodeEdit, current_line_text:String, lin
 	if not is_instance_valid(gdscript_parser):
 		return {0:sp_ins.get_hl_info_dict(sp_ins.comment_color)}
 	var current_class = gdscript_parser.get_class_at_line(line_idx)
-	var current_class_obj = gdscript_parser.get_class_object(current_class) as GDScriptParser.ParserClass
+	var current_class_obj = gdscript_parser.get_class_object(current_class) as ParserClass
 	if not is_instance_valid(current_class_obj):
 		return {0:sp_ins.get_hl_info_dict(sp_ins.comment_color)}
 	var script_class_path = current_class_obj.get_script_class_path()

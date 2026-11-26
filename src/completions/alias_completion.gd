@@ -1,4 +1,5 @@
 extends EditorCodeCompletion
+#! gdp-strip-cast CaretContext
 
 const UNode = UtilsRemote.UNode
 

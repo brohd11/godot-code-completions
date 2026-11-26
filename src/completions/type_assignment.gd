@@ -1,4 +1,5 @@
 extends EditorCodeCompletion
+#! gdp-strip-cast ParserClass
 
 
 #! import_p UClassDetail,
@@ -31,7 +32,7 @@ func _on_code_completion_requested(script_editor:CodeEdit) -> bool:
 		hide_global_classes = import_ins.current_import_data.hide_global_classes
 		visible_global_classes = import_ins.current_import_data.visible_global_classes
 	
-	var class_obj:GDScriptParser.ParserClass
+	var class_obj:ParserClass
 	var type_hint_text = caret_context.get_type_hint_text()
 	if not type_hint_text.contains("."):
 		type_hint_text = ""
@@ -68,7 +69,7 @@ func _on_code_completion_requested(script_editor:CodeEdit) -> bool:
 	return true
 
 
-func _get_class_obj_completion_options(class_obj:GDScriptParser.ParserClass):
+func _get_class_obj_completion_options(class_obj:ParserClass):
 	var options = {}
 	#var class_script = class_obj.script_resource
 	#if not is_instance_valid(class_script):

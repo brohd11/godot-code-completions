@@ -1,4 +1,5 @@
 extends EditorCodeCompletion
+#! gdp-strip-cast CaretContext
 
 ## Completes method and property names written as string arguments - call("…"),
 ## set_deferred("…"), Callable(obj, "…"), tween_property(node, "position:x", …).

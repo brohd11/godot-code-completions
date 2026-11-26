@@ -1,4 +1,5 @@
 extends EditorCodeCompletion
+#! gdp-strip-cast GDScriptParser, ParserClass, ParserFunc
 
 #! import_p UClassDetail,Settings,UString,
 
@@ -196,7 +197,7 @@ func _get_class_members(parser:GDScriptParser, path:String):
 	var parser_data = parser.get_parser_and_class_obj_for_script(path)
 	var class_obj = parser_data.class_obj
 	for func_name in class_obj.functions.keys():
-		var func_obj = class_obj.functions[func_name] as GDScriptParser.ParserFunc
+		var func_obj = class_obj.functions[func_name] as ParserFunc
 		if not func_obj.is_static():
 			continue
 		var insert = func_name + "()" if func_obj.arguments.is_empty() else func_name + "("
@@ -261,7 +262,7 @@ func _get_current_import_data() -> Dictionary:
 		return {}
 	
 	var parser = get_gdscript_parser()
-	var class_obj:GDScriptParser.ParserClass = parser.get_class_object("")
+	var class_obj:ParserClass = parser.get_class_object("")
 	if not is_instance_valid(class_obj):
 		return {}
 	

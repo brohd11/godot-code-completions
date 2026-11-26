@@ -1,4 +1,5 @@
 extends EditorCodeCompletion
+#! gdp-strip-cast CaretContext
 
 const _HIDE_PRIVATE_PROP_SETTING = &"plugin/code_completion/member_access/hide_private_properties"
 

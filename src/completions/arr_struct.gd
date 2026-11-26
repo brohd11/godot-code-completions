@@ -1,4 +1,5 @@
 extends EditorCodeCompletion
+#! gdp-strip-cast CaretContext, ParserClass
 
 ## Array "structs": `#! arr_struct [constructor]` on a class that builds plain arrays and names their
 ## slots with an unnamed enum; slot types are the constructor's args by index (args[ENUM]).
@@ -416,7 +417,7 @@ func get_struct_data(class_path:String) -> Dictionary:
 	var parser_data = parser.get_parser_and_class_obj_for_script(class_path)
 	if not parser_data:
 		return {}
-	var class_obj = parser_data.class_obj as GDScriptParser.ParserClass
+	var class_obj = parser_data.class_obj as ParserClass
 	if not is_instance_valid(class_obj):
 		return {}
 	var members:Dictionary = _get_struct_members(parser_data.parser, class_obj)
@@ -438,7 +439,7 @@ func get_struct_data(class_path:String) -> Dictionary:
 	}
 
 ## Named in the class tag, otherwise the first static func.
-func _get_constructor_name(class_path:String, class_obj:GDScriptParser.ParserClass) -> String:
+func _get_constructor_name(class_path:String, class_obj:ParserClass) -> String:
 	var tag_data = _get_class_tag_data(class_path)
 	if tag_data is Dictionary and tag_data.get("constructor", "") != "":
 		return tag_data.constructor
@@ -457,7 +458,7 @@ static func member_types_by_index(members:Dictionary, arg_types:Array) -> Dictio
 	return types
 
 
-func _get_struct_members(parser, class_obj:GDScriptParser.ParserClass) -> Dictionary:
+func _get_struct_members(parser, class_obj:ParserClass) -> Dictionary:
 	var code_edit_parser = parser.get_code_edit_parser()
 	# nested classes own their lines, so only this class's enums are seen
 	var enum_texts:Array = []
@@ -506,7 +507,7 @@ func _syntax_highlighting(_script_editor:CodeEdit, current_line_text:String, lin
 	var gdscript_parser = sp_ins.get_gdscript_parser() # members only, no inference needed
 	if not is_instance_valid(gdscript_parser):
 		return {0:sp_ins.get_hl_info_dict(sp_ins.comment_color)}
-	var current_class_obj = gdscript_parser.get_class_object(gdscript_parser.get_class_at_line(line_idx)) as GDScriptParser.ParserClass
+	var current_class_obj = gdscript_parser.get_class_object(gdscript_parser.get_class_at_line(line_idx)) as ParserClass
 	if not is_instance_valid(current_class_obj):
 		return {0:sp_ins.get_hl_info_dict(sp_ins.comment_color)}
 	var script_class_path = current_class_obj.get_script_class_path()

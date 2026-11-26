@@ -1,4 +1,5 @@
 extends EditorCodeCompletion
+#! gdp-strip-cast CaretContext
 
 
 const CATEGORIES = ["color", "constant", "font", "font_size", "icon", "stylebox"]

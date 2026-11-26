@@ -1,9 +1,11 @@
+#! gdp-strip-cast ParserClass
 
 const EditorCodeCompletionSingleton = EditorCodeCompletion.EditorCodeCompletionSingleton
 const UtilsRemote = EditorCodeCompletionSingleton.UtilsRemote
 const UClassDetail = UtilsRemote.UClassDetail
 const EditorColors = UtilsRemote.EditorColors
 const EditorGDScriptParser = UtilsRemote.EditorGDScriptParser
+const ParserClass = GDScriptParser.ParserClass
 
 const AliasCompletion = EditorCodeCompletionSingleton.AliasCompletion
 const PLACEHOLDER = AliasCompletion.PLACEHOLDER
@@ -207,7 +209,7 @@ static func sig(type_or_var:String, signal_name:String):
 	if type.is_absolute_path(): # custom class
 		var ed_parser = EditorGDScriptParser.get_parser()
 		var parser_data = ed_parser.get_parser_and_class_obj_for_script(type)
-		var class_obj:GDScriptParser.ParserClass = parser_data.class_obj
+		var class_obj:ParserClass = parser_data.class_obj
 		var member_data = class_obj.get_member_data(signal_name, true)
 		var valid = member_data != null and member_data.get(GDScriptParser.Keys.MEMBER_TYPE) == GDScriptParser.Keys.MEMBER_TYPE_SIGNAL
 		if not valid:
@@ -230,7 +232,7 @@ static func sig(type_or_var:String, signal_name:String):
 		
 		var actual_path = GDScriptParser.Utils.get_class_access_path_from_member_data(member_data)
 		var actual_parser = ed_parser.get_parser_and_class_obj_for_script(actual_path)
-		var actual_class_obj:GDScriptParser.ParserClass = actual_parser.class_obj
+		var actual_class_obj:ParserClass = actual_parser.class_obj
 		var sig_args = actual_class_obj.get_script_signal_args(signal_name)
 		var arg_str = ""
 		for nm in sig_args.keys():

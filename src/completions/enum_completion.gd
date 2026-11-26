@@ -1,5 +1,6 @@
 @tool
 extends EditorCodeCompletion
+#! gdp-strip-cast CaretContext, ParserClass
 #! import_p UString,UClassDetail
 
 const CacheHelper = EditorCodeCompletionSingleton.CacheHelper
@@ -197,7 +198,7 @@ func _add_custom_enum_members(script_data:Dictionary):
 	
 	var gdscript_parser = get_gdscript_parser()
 	var enum_script_parser = gdscript_parser.get_parser_for_path(enum_main_script_path)
-	var enum_class_obj = enum_script_parser.get_class_object(enum_access) as GDScriptParser.ParserClass
+	var enum_class_obj = enum_script_parser.get_class_object(enum_access) as ParserClass
 	print_deb(T.ENUM, ["ENUM MAIN SCRIPT", enum_main_script_path, "CLASS", enum_class_obj.get_name(), enum_name])
 	
 	var enum_members = enum_class_obj.get_enum_members(enum_name)

@@ -1,4 +1,5 @@
 class_name EditorCodeCompletion
+#! gdp-strip-cast GDScriptParser, CaretContext, ParserClass, ParserFunc
 
 const EditorCodeCompletionSingleton = preload("res://addons/code_completions/src/class/editor_code_completion_singleton.gd")
 
@@ -18,6 +19,8 @@ const ExpressionState = CaretContext.ExpressionState
 const EditorGDScriptParser = UtilsRemote.EditorGDScriptParser
 const CaretContext = GDScriptParser.CaretContext
 const ScopeState = CaretContext.ScopeState
+const ParserClass = GDScriptParser.ParserClass
+const ParserFunc = GDScriptParser.ParserFunc
 
 var singleton:EditorCodeCompletionSingleton
 
@@ -284,7 +287,7 @@ class Helpers:
 			var resolved_inner_class = resolve_script_data[1]
 			
 			var current_parser = parser.get_parser_for_path(resolved_script_path)
-			var class_obj = current_parser.get_class_object(resolved_inner_class) as GDScriptParser.ParserClass
+			var class_obj = current_parser.get_class_object(resolved_inner_class) as ParserClass
 			for c in class_obj.get_gdscript_constants():
 				var member_data = class_obj.get_member(c)
 				if not member_data:
@@ -345,7 +348,7 @@ class Helpers:
 		#print("TRIMMED::", type)
 		return class_completion_from_type(code_completion, type, caret_context.get_current_class_object(), params)
 	
-	static func class_completion_from_type(code_completion:EditorCodeCompletion, type:String, class_obj:GDScriptParser.ParserClass, params:=completion_params()):
+	static func class_completion_from_type(code_completion:EditorCodeCompletion, type:String, class_obj:ParserClass, params:=completion_params()):
 		
 		var caret_context = code_completion.get_caret_context()
 		var parser = GDScriptParser.Utils.ParserRef.get_parser(class_obj)
@@ -468,7 +471,7 @@ class Helpers:
 		
 		#var res_member = GDScriptParser.Utils.type_path_get_member(type)
 		var parser = parser_for_res.parser as GDScriptParser
-		var class_obj = parser_for_res.class_obj as GDScriptParser.ParserClass
+		var class_obj = parser_for_res.class_obj as ParserClass
 		
 		var constants_to_hide = []
 		if params.get("global_include") and params.get("global_include_class_preloads"):
@@ -522,7 +525,7 @@ class Helpers:
 							func_class_obj = next_parser.class_obj
 							#print(class_obj.get_script_class_path(), " -> ", func_class_obj.get_script_class_path())
 						
-						var func_obj = func_class_obj.get_function(member) as GDScriptParser.ParserFunc
+						var func_obj = func_class_obj.get_function(member) as ParserFunc
 						if func_obj.get_arguments().is_empty():
 							display = member + "()"
 							insert = member + "()"
@@ -587,7 +590,7 @@ class Helpers:
 				target_class_obj = caret_context.get_current_class_object()
 			else:
 				var target_parser_data = parser.get_parser_and_class_obj_for_script(resolved)
-				target_class_obj = target_parser_data.class_obj as GDScriptParser.ParserClass
+				target_class_obj = target_parser_data.class_obj as ParserClass
 			
 			for c in target_class_obj.get_gdscript_constants():
 				var member_data = target_class_obj.get_member(c)
@@ -680,7 +683,7 @@ class Helpers:
 		var parser_data = code_completion.get_gdscript_parser().get_parser_and_class_obj_for_script(type)
 		if not parser_data:
 			return
-		var class_obj = parser_data.class_obj as GDScriptParser.ParserClass
+		var class_obj = parser_data.class_obj as ParserClass
 		if not is_instance_valid(class_obj):
 			return
 

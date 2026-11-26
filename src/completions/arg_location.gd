@@ -1,4 +1,5 @@
 extends EditorCodeCompletion
+#! gdp-strip-cast GDScriptParser, CaretContext, ParserClass
 
 const TagParser = UtilsRemote.TagParser
 const Token = UtilsRemote.Token
@@ -219,7 +220,7 @@ func _syntax_highlighting(_script_editor:CodeEdit, current_line_text:String, lin
 	if not is_instance_valid(parser):
 		return {}
 	var current_class = parser.get_class_at_line(line_idx)
-	var current_class_obj = parser.get_class_object(current_class) as GDScriptParser.ParserClass
+	var current_class_obj = parser.get_class_object(current_class) as ParserClass
 	if not is_instance_valid(current_class_obj):
 		return {}
 	
