@@ -3,8 +3,6 @@ extends EditorCodeCompletion
 const TagParser = UtilsRemote.TagParser
 const Token = UtilsRemote.Token
 
-const HLInfo = SyntaxPlusSingleton.HLInfo
-
 const ARG_LOCATION_ENABLE = &"plugin/code_completion/arg_location/enable"
 
 const TAG = &"arg_location"
@@ -23,7 +21,9 @@ var _global_color:Color
 
 func _singleton_ready() -> void:
 	EditorCodeCompletion.register_tag_static("#!", TAG, EditorCodeCompletionSingleton.TagLocation.ANY)
-	SyntaxPlusSingleton.register_highlight_callable("#!", TAG, _syntax_highlighting, SyntaxPlusSingleton.CallableLocation.ANY)
+	var sp_ins = EditorCodeCompletionSingleton.get_syntax_plus()
+	if is_instance_valid(sp_ins):
+		sp_ins.register_highlight_callable("#!", TAG, _syntax_highlighting, sp_ins.CallableLocation.ANY)
 	
 	TagParser.register_tag_parser(TAG, self)
 	
@@ -213,6 +213,8 @@ func _function_call(caret_context:CaretContext):
 #^r this needs work to get proper scope. Completion works but the highlighting does not use parser
 
 func _syntax_highlighting(_script_editor:CodeEdit, current_line_text:String, line_idx:int, comment_tag_idx:int):
+	var sp_ins = EditorCodeCompletionSingleton.get_syntax_plus() # only SyntaxPlus calls this, so it is up
+	var HLInfo = sp_ins.HLInfo
 	var parser = get_gdscript_parser(get_current_script().resource_path)
 	if not is_instance_valid(parser):
 		return {}
@@ -251,7 +253,7 @@ func _syntax_highlighting(_script_editor:CodeEdit, current_line_text:String, lin
 				HLInfo.add_color(hl_info, _sym_color, adj_idx, adj_idx + token.length(), _comment_color, false)
 				continue
 			elif token in TAG_ARGS and (last_char == "-" or last_char == ","):
-				HLInfo.add_color(hl_info, SyntaxPlusSingleton.DEFAULT_TAG_COLOR, adj_idx, adj_idx + token.length(), _comment_color, false)
+				HLInfo.add_color(hl_info, sp_ins.DEFAULT_TAG_COLOR, adj_idx, adj_idx + token.length(), _comment_color, false)
 				continue
 			else: # anything that isn't ',' or preceded by is a new statement
 				in_arg = false

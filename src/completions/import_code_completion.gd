@@ -1,10 +1,8 @@
 extends EditorCodeCompletion
 
-#! import_show_global SyntaxPlusSingleton
 #! import_p UClassDetail,Settings,UString,
 
 const HidePrivate = preload("res://addons/code_completions/src/completions/hide_private.gd")
-const HLInfo = SyntaxPlusSingleton.HLInfo
 
 const CacheHelper = UtilsRemote.CacheHelper
 
@@ -47,16 +45,18 @@ func _get_completion_settings() -> Dictionary:
 
 
 func _singleton_ready():
+	var sp_ins = EditorCodeCompletionSingleton.get_syntax_plus()
 	for prefix in _COMMENT_TAGS.keys():
 		var tag_data = _COMMENT_TAGS.get(prefix)
 		for tag in tag_data.keys():
+			register_tag(prefix, tag, TagLocation.START)
+			if not is_instance_valid(sp_ins):
+				continue
 			var callable_nm = tag_data.get(tag)
 			if callable_nm == null:
-				SyntaxPlusSingleton.register_comment_tag(prefix, tag)
+				sp_ins.register_comment_tag(prefix, tag)
 			else:
-				var callable = get(callable_nm)
-				SyntaxPlusSingleton.register_highlight_callable(prefix, tag, callable, SyntaxPlusSingleton.CallableLocation.START)
-			register_tag(prefix, tag, TagLocation.START)
+				sp_ins.register_highlight_callable(prefix, tag, get(callable_nm), sp_ins.CallableLocation.START)
 	
 	EditorInterface.get_resource_filesystem().filesystem_changed.connect(_on_filesystem_changed)
 
@@ -341,8 +341,9 @@ func _get_current_import_data() -> Dictionary:
 #region SyntaxHL
 
 func _import_syntax_hl(script_editor:CodeEdit, current_line_text:String, _line:int, comment_tag_idx:int):
+	var sp_ins = EditorCodeCompletionSingleton.get_syntax_plus() # only SyntaxPlus calls this, so it is up
+	var HLInfo = sp_ins.HLInfo
 	var current_script = get_current_script()
-	var sp_ins = SyntaxPlusSingleton.get_instance()
 	var hl_info = {}
 	var global_class_color = sp_ins.user_type_color
 	var preload_class_color = sp_ins.global_function_color
@@ -373,7 +374,7 @@ func _import_syntax_hl(script_editor:CodeEdit, current_line_text:String, _line:i
 	var in_scope_class_names:Array = name_data.valid
 	var class_color:Color = preload_class_color if preload_hint else global_class_color
 	
-	_add_color(hl_info, comment_text, ALL_KEYWORD, SyntaxPlusSingleton.DEFAULT_TAG_COLOR, sp_ins)
+	_add_color(hl_info, comment_text, ALL_KEYWORD, sp_ins.DEFAULT_TAG_COLOR, sp_ins)
 	for _class_name in current_classes:
 		var is_valid = _class_name in in_scope_class_names
 		if _class_name.contains("."):
@@ -386,7 +387,8 @@ func _import_syntax_hl(script_editor:CodeEdit, current_line_text:String, _line:i
 	
 	return hl_info
 
-func _add_color(hl_info:Dictionary, comment_text:String, word:String, color:Color, sp_ins:SyntaxPlusSingleton):
+func _add_color(hl_info:Dictionary, comment_text:String, word:String, color:Color, sp_ins):
+	var HLInfo = sp_ins.HLInfo
 	var word_idx = find_indentifier_in_line(comment_text, word)
 	if word_idx == -1:
 		return

@@ -16,6 +16,7 @@ const CacheHelper = UtilsRemote.CacheHelper
 const EditorGDScriptParser = UtilsRemote.EditorGDScriptParser
 const CaretContext = GDScriptParser.CaretContext
 const SettingHelperEditor = UtilsRemote.SettingHelperEditor
+const CheckInstance = Singletons.CheckInstance
 
 #^ defaults
 const EnumCompletion = preload("res://addons/code_completions/src/completions/enum_completion.gd")
@@ -59,6 +60,10 @@ static func get_singleton_name() -> String:
 
 static func get_instance() -> PE_STRIP_CAST_SCRIPT:
 	return _get_instance(PE_STRIP_CAST_SCRIPT)
+
+## SyntaxPlus is optional, so it is never named: null when its plugin is off.
+static func get_syntax_plus() -> Variant:
+	return CheckInstance.get_instance("SyntaxPlusSingleton")
 
 static func register_node(node):
 	var instance = _register_node(PE_STRIP_CAST_SCRIPT, node)
@@ -140,11 +145,9 @@ func _singleton_init():
 
 # these should be simplified now, dont think it needs to be complex
 func _register_singletons(plugin:EditorPlugin):
-	SyntaxPlusSingleton.register_node(plugin)
 	EditorGDScriptParser.register_node(plugin)
 
 func _unregister_singletons(plugin:EditorPlugin):
-	SyntaxPlusSingleton.unregister_node(plugin)
 	EditorGDScriptParser.unregister_node(plugin)
 
 

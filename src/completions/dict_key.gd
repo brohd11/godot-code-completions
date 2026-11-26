@@ -23,7 +23,9 @@ var _code_hint_line = -1
 
 func _singleton_ready() -> void:
 	EditorCodeCompletion.register_tag_static(PREFIX, TAG, EditorCodeCompletionSingleton.TagLocation.ANY)
-	SyntaxPlusSingleton.register_highlight_callable(PREFIX, TAG, _syntax_highlighting, SyntaxPlusSingleton.CallableLocation.ANY)
+	var sp_ins = EditorCodeCompletionSingleton.get_syntax_plus()
+	if is_instance_valid(sp_ins):
+		sp_ins.register_highlight_callable(PREFIX, TAG, _syntax_highlighting, sp_ins.CallableLocation.ANY)
 	
 	ScriptEditorRef.subscribe(ScriptEditorRef.Event.TEXT_CHANGED, _on_text_changed)
 	
@@ -646,23 +648,24 @@ func resolve_tagged_expression(expression:String, line:int=-1):
 
 
 func _syntax_highlighting(_script_editor:CodeEdit, current_line_text:String, line_idx:int, comment_tag_idx:int):
+	var sp_ins = EditorCodeCompletionSingleton.get_syntax_plus() # only SyntaxPlus calls this, so it is up
+	var HLInfo = sp_ins.HLInfo
 	var comment_text = current_line_text.substr(comment_tag_idx)
-	var hl_info = SyntaxPlusSingleton.HLInfo.highlight_prefix(PREFIX, comment_text)
-	hl_info.merge(SyntaxPlusSingleton.HLInfo.highlight_tag(TAG, comment_text))
+	var hl_info = HLInfo.highlight_prefix(PREFIX, comment_text)
+	hl_info.merge(HLInfo.highlight_tag(TAG, comment_text))
 	
-	var prefix_end = SyntaxPlusSingleton.HLInfo.get_tag_end_index(PREFIX, TAG, comment_text)
+	var prefix_end = HLInfo.get_tag_end_index(PREFIX, TAG, comment_text)
 	
 	#var gdscript_parser = EditorGDScriptParser.get_parser()
-	var gdscript_parser = SyntaxPlusSingleton.get_gdscript_parser() # use this one since it just needs the members, no type inference
+	var gdscript_parser = sp_ins.get_gdscript_parser() # use this one since it just needs the members, no type inference
 	if not is_instance_valid(gdscript_parser):
-		return {0:SyntaxPlusSingleton.get_hl_info_dict(SyntaxPlusSingleton.get_instance().comment_color)}
+		return {0:sp_ins.get_hl_info_dict(sp_ins.comment_color)}
 	var current_class = gdscript_parser.get_class_at_line(line_idx)
 	var current_class_obj = gdscript_parser.get_class_object(current_class) as GDScriptParser.ParserClass
 	if not is_instance_valid(current_class_obj):
-		return {0:SyntaxPlusSingleton.get_hl_info_dict(SyntaxPlusSingleton.get_instance().comment_color)}
+		return {0:sp_ins.get_hl_info_dict(sp_ins.comment_color)}
 	var script_class_path = current_class_obj.get_script_class_path()
 	
-	var sp_ins = SyntaxPlusSingleton.get_instance()
 	var stripped_comment = comment_text.substr(prefix_end)
 	var tokens = Token.tokenize_string(stripped_comment).get("tokens")
 	var has_arg_delim = stripped_comment.contains(";")
@@ -678,33 +681,33 @@ func _syntax_highlighting(_script_editor:CodeEdit, current_line_text:String, lin
 		if in_args:
 			if t == ";":
 				in_args = false
-				SyntaxPlusSingleton.HLInfo.add_color(hl_info, sp_ins.symbol_color, adj_idx, -1, null, false)
+				HLInfo.add_color(hl_info, sp_ins.symbol_color, adj_idx, -1, null, false)
 			elif t == "i":
-				SyntaxPlusSingleton.HLInfo.add_color(hl_info, sp_ins.DEFAULT_TAG_COLOR, adj_idx, -1, null, false)
+				HLInfo.add_color(hl_info, sp_ins.DEFAULT_TAG_COLOR, adj_idx, -1, null, false)
 				in_inh_statement = true
 			elif t == "-":
 				if in_inh_statement:
-					SyntaxPlusSingleton.HLInfo.add_color(hl_info, sp_ins.comment_color, adj_idx, -1, null, false)
+					HLInfo.add_color(hl_info, sp_ins.comment_color, adj_idx, -1, null, false)
 			elif in_inh_statement:
-				hl_info.merge(SyntaxPlusSingleton.HLInfo.check_const_path(t, script_class_path, adj_idx))
-				SyntaxPlusSingleton.HLInfo.add_color(hl_info, sp_ins.comment_color, adj_token_end)
+				hl_info.merge(HLInfo.check_const_path(t, script_class_path, adj_idx))
+				HLInfo.add_color(hl_info, sp_ins.comment_color, adj_token_end)
 				in_inh_statement = false
 			elif t in MODIFIERS:
-				SyntaxPlusSingleton.HLInfo.add_color(hl_info, sp_ins.DEFAULT_TAG_COLOR, adj_idx, adj_token_end, null, false)
+				HLInfo.add_color(hl_info, sp_ins.DEFAULT_TAG_COLOR, adj_idx, adj_token_end, null, false)
 			
 		elif t == ":":
-			SyntaxPlusSingleton.HLInfo.add_color(hl_info, sp_ins.symbol_color, adj_idx, -1, null, false)
+			HLInfo.add_color(hl_info, sp_ins.symbol_color, adj_idx, -1, null, false)
 			in_type_assign = true
 		elif not in_type_assign:
-			SyntaxPlusSingleton.HLInfo.add_color(hl_info, sp_ins.default_text_color, adj_idx, adj_token_end)
+			HLInfo.add_color(hl_info, sp_ins.default_text_color, adj_idx, adj_token_end)
 		else:
 			in_type_assign = false
 			if GDScriptParser.BuiltInChecker.is_builtin_class(t):
-				SyntaxPlusSingleton.HLInfo.add_color(hl_info, sp_ins.engine_type_color, adj_idx, adj_token_end)
+				HLInfo.add_color(hl_info, sp_ins.engine_type_color, adj_idx, adj_token_end)
 			else:
-				hl_info.merge(SyntaxPlusSingleton.HLInfo.check_const_path(t, script_class_path, adj_idx))
+				hl_info.merge(HLInfo.check_const_path(t, script_class_path, adj_idx))
 	
-	SyntaxPlusSingleton.HLInfo.add_color(hl_info, sp_ins.comment_color, current_line_text.length(), -1, null, false)
+	HLInfo.add_color(hl_info, sp_ins.comment_color, current_line_text.length(), -1, null, false)
 	return hl_info
 
 class EditorSet:
