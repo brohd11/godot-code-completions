@@ -11,11 +11,8 @@ options:
   include_min_version: true
   use_tag_in_cfg: true
   parser_settings:
-    backport_target: 100.0
-    parse_cs:
-      namespace_rename: {}
+    parse_cs: {}
     parse_gd:
-      backport_string_renames: {}
       class_rename_ignore: [EditorCodeCompletion]
     parse_tres: {}
     parse_tscn: {}
